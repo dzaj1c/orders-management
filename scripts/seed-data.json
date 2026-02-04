@@ -1,0 +1,38 @@
+{
+  "products": [
+    "Ćevapi (portion)",
+    "Bosnian Coffee Set",
+    "Copper Coffee Pot (Džezva)",
+    "Handmade Carpet",
+    "Sarajevo Rose Souvenir",
+    "Baklava (kg)",
+    "Ajvar (jar)",
+    "Wooden Chess Set",
+    "Traditional Embroidery",
+    "Honey from Bjelašnica"
+  ],
+  "customers": [
+    "Šeher Tours d.o.o.",
+    "Baščaršija Crafts",
+    "Sarajevo Brewery",
+    "Vijećnica Books",
+    "Ferhadija Commerce",
+    "BBI Center",
+    "Grbavička Pekara",
+    "Ilidža Travel",
+    "Otoka Market",
+    "Dobrinja Services"
+  ],
+  "addresses": [
+    "Ferhadija 12, Sarajevo",
+    "Baščaršija 7, Sarajevo",
+    "Maršala Tita 23, Sarajevo",
+    "Zmaja od Bosne 15, Sarajevo",
+    "Bistrik 8, Sarajevo",
+    "Ilidža, Aleja 5, Sarajevo",
+    "Grbavička 44, Sarajevo",
+    "Dobrinja, 4. Stari Grad, Sarajevo",
+    "Otoka 2, Sarajevo",
+    "Hrasno 19, Sarajevo"
+  ]
+}
