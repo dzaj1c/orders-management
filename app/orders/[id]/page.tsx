@@ -12,15 +12,13 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  MenuItem,
-  Select,
   Stack,
   Typography,
 } from "@mui/material";
 import type { Order } from "@/types";
-import { ORDER_STATUS, type OrderStatus } from "@/types";
+import type { OrderStatus } from "@/types";
 import { getOrderById, deleteOrder, updateOrder } from "@/app/actions/orders";
-import { getStatusSelectSx } from "@/lib/order-status-styles";
+import { OrderStatus as OrderStatusBadge } from "@/components";
 import {
   pageLayout,
   pageContentDetail,
@@ -56,20 +54,14 @@ export default function OrderDetailsPage() {
     }
 
     async function load() {
-      try {
-        const data = await getOrderById(idNum);
-        if (!isMounted) return;
-        if (!data) {
-          setError("Order not found.");
-        } else {
-          setOrder(data);
-        }
-      } catch (err) {
-        console.error("OrderDetailsPage:", err);
-        if (isMounted) setError("Failed to load order.");
-      } finally {
-        if (isMounted) setLoading(false);
+      const result = await getOrderById(idNum);
+      if (!isMounted) return;
+      if (!result.success) {
+        setError(result.error);
+      } else {
+        setOrder(result.data);
       }
+      setLoading(false);
     }
 
     load();
@@ -83,13 +75,12 @@ export default function OrderDetailsPage() {
     async (newStatus: OrderStatus) => {
       if (!order || newStatus === order.status) return;
       setStatusUpdating(true);
-      try {
-        const updated = await updateOrder(order.id, { status: newStatus });
-        if (updated) setOrder(updated);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setStatusUpdating(false);
+      const result = await updateOrder(order.id, { status: newStatus });
+      setStatusUpdating(false);
+      if (result.success) {
+        setOrder(result.data);
+      } else {
+        setError(result.error);
       }
     },
     [order]
@@ -131,20 +122,11 @@ export default function OrderDetailsPage() {
             </Typography>
           </Box>
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-            <Select
-              variant="outlined"
-              size="small"
-              value={order.status}
+            <OrderStatusBadge
+              status={order.status}
+              onChange={handleStatusChange}
               disabled={statusUpdating}
-              onChange={(e) => handleStatusChange(e.target.value as OrderStatus)}
-              sx={getStatusSelectSx(order.status)}
-            >
-              {ORDER_STATUS.map((status) => (
-                <MenuItem key={status} value={status}>
-                  {status}
-                </MenuItem>
-              ))}
-            </Select>
+            />
             <Button
               variant="outlined"
               onClick={() => router.push(`/orders/${order.id}/edit`)}
@@ -190,15 +172,13 @@ export default function OrderDetailsPage() {
             <Button
               onClick={async () => {
                 setDeleting(true);
-                try {
-                  await deleteOrder(order.id);
+                const result = await deleteOrder(order.id);
+                setDeleting(false);
+                if (result.success) {
                   router.push("/orders");
-                } catch (err) {
-                  console.error(err);
-                  setError("Failed to delete order");
+                } else {
+                  setError(result.error);
                   setDeleteDialogOpen(false);
-                } finally {
-                  setDeleting(false);
                 }
               }}
               color="error"

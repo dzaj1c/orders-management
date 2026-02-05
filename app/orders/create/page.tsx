@@ -19,6 +19,9 @@ export default function CreateOrderPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = React.useState<
+    Record<string, string[]>
+  >({});
 
   const [form, setForm] = React.useState({
     product_name: "",
@@ -40,29 +43,24 @@ export default function CreateOrderPage() {
     event.preventDefault();
     setSubmitting(true);
     setError(null);
+    setFieldErrors({});
 
-    try {
-      const created = await createOrder({
-        product_name: form.product_name,
-        customer_name: form.customer_name,
-        delivery_address: form.delivery_address,
-        quantity: Number(form.quantity),
-        price_per_item: Number(form.price_per_item),
-        status: form.status,
-      });
+    const result = await createOrder({
+      product_name: form.product_name,
+      customer_name: form.customer_name,
+      delivery_address: form.delivery_address,
+      quantity: Number(form.quantity),
+      price_per_item: Number(form.price_per_item),
+      status: form.status,
+    });
 
-      if (!created) {
-        setError("Failed to create order. Please check your input.");
-        setSubmitting(false);
-        return;
-      }
-
-      router.push(`/orders/${created.id}`);
-    } catch (err) {
-      console.error("Failed to create order", err);
-      setError("Something went wrong while creating the order.");
-      setSubmitting(false);
+    setSubmitting(false);
+    if (!result.success) {
+      setError(result.error);
+      setFieldErrors(result.fieldErrors ?? {});
+      return;
     }
+    router.push(`/orders/${result.data.id}`);
   }
 
   return (
@@ -83,6 +81,8 @@ export default function CreateOrderPage() {
               onChange={(e) => handleChange("product_name", e.target.value)}
               required
               fullWidth
+              error={!!fieldErrors.product_name}
+              helperText={fieldErrors.product_name?.join(", ")}
             />
             <TextField
               label="Customer name"
@@ -90,6 +90,8 @@ export default function CreateOrderPage() {
               onChange={(e) => handleChange("customer_name", e.target.value)}
               required
               fullWidth
+              error={!!fieldErrors.customer_name}
+              helperText={fieldErrors.customer_name?.join(", ")}
             />
             <TextField
               label="Delivery address"
@@ -101,6 +103,8 @@ export default function CreateOrderPage() {
               fullWidth
               multiline
               minRows={2}
+              error={!!fieldErrors.delivery_address}
+              helperText={fieldErrors.delivery_address?.join(", ")}
             />
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
@@ -112,7 +116,9 @@ export default function CreateOrderPage() {
                 }
                 required
                 fullWidth
-                inputProps={{ min: 1 }}
+                slotProps={{ htmlInput: { min: 1 } }}
+                error={!!fieldErrors.quantity}
+                helperText={fieldErrors.quantity?.join(", ")}
               />
               <TextField
                 label="Price per item"
@@ -123,7 +129,9 @@ export default function CreateOrderPage() {
                 }
                 required
                 fullWidth
-                inputProps={{ min: 0, step: 0.01 }}
+                slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                error={!!fieldErrors.price_per_item}
+                helperText={fieldErrors.price_per_item?.join(", ")}
               />
             </Stack>
             <TextField
@@ -134,6 +142,8 @@ export default function CreateOrderPage() {
                 handleChange("status", e.target.value as OrderStatus)
               }
               fullWidth
+              error={!!fieldErrors.status}
+              helperText={fieldErrors.status?.join(", ")}
             >
               {ORDER_STATUS.map((status) => (
                 <MenuItem key={status} value={status}>

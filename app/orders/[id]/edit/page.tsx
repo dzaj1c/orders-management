@@ -29,6 +29,9 @@ export default function EditOrderPage() {
   const [loading, setLoading] = React.useState(true);
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = React.useState<
+    Record<string, string[]>
+  >({});
 
   const [form, setForm] = React.useState({
     product_name: "",
@@ -49,28 +52,23 @@ export default function EditOrderPage() {
     let isMounted = true;
 
     async function load() {
-      try {
-        const data = await getOrderById(idNum);
-        if (!isMounted) return;
-        if (data) {
-          setOrder(data);
-          setForm({
-            product_name: data.product_name,
-            customer_name: data.customer_name,
-            delivery_address: data.delivery_address,
-            quantity: data.quantity,
-            price_per_item: data.price_per_item,
-            status: data.status,
-          });
-        } else {
-          setError("Failed to load order.");
-        }
-      } catch (err) {
-        console.error(err);
-        if (isMounted) setError("Failed to load order.");
-      } finally {
-        if (isMounted) setLoading(false);
+      const result = await getOrderById(idNum);
+      if (!isMounted) return;
+      if (!result.success) {
+        setError(result.error);
+      } else {
+        const data = result.data;
+        setOrder(data);
+        setForm({
+          product_name: data.product_name,
+          customer_name: data.customer_name,
+          delivery_address: data.delivery_address,
+          quantity: data.quantity,
+          price_per_item: data.price_per_item,
+          status: data.status,
+        });
       }
+      setLoading(false);
     }
 
     load();
@@ -91,29 +89,24 @@ export default function EditOrderPage() {
     if (!order) return;
     setSubmitting(true);
     setError(null);
+    setFieldErrors({});
 
-    try {
-      const updated = await updateOrder(order.id, {
-        product_name: form.product_name,
-        customer_name: form.customer_name,
-        delivery_address: form.delivery_address,
-        quantity: Number(form.quantity),
-        price_per_item: Number(form.price_per_item),
-        status: form.status,
-      });
+    const result = await updateOrder(order.id, {
+      product_name: form.product_name,
+      customer_name: form.customer_name,
+      delivery_address: form.delivery_address,
+      quantity: Number(form.quantity),
+      price_per_item: Number(form.price_per_item),
+      status: form.status,
+    });
 
-      if (!updated) {
-        setError("Failed to update order. Please check your input.");
-        setSubmitting(false);
-        return;
-      }
-
-      router.push(`/orders/${order.id}`);
-    } catch (err) {
-      console.error("Failed to update order", err);
-      setError("Something went wrong while updating the order.");
-      setSubmitting(false);
+    setSubmitting(false);
+    if (!result.success) {
+      setError(result.error);
+      setFieldErrors(result.fieldErrors ?? {});
+      return;
     }
+    router.push(`/orders/${order.id}`);
   }
 
   if (loading) {
@@ -157,6 +150,8 @@ export default function EditOrderPage() {
               onChange={(e) => handleChange("product_name", e.target.value)}
               required
               fullWidth
+              error={!!fieldErrors.product_name}
+              helperText={fieldErrors.product_name?.join(", ")}
             />
             <TextField
               label="Customer name"
@@ -164,6 +159,8 @@ export default function EditOrderPage() {
               onChange={(e) => handleChange("customer_name", e.target.value)}
               required
               fullWidth
+              error={!!fieldErrors.customer_name}
+              helperText={fieldErrors.customer_name?.join(", ")}
             />
             <TextField
               label="Delivery address"
@@ -175,6 +172,8 @@ export default function EditOrderPage() {
               fullWidth
               multiline
               minRows={2}
+              error={!!fieldErrors.delivery_address}
+              helperText={fieldErrors.delivery_address?.join(", ")}
             />
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
@@ -186,7 +185,9 @@ export default function EditOrderPage() {
                 }
                 required
                 fullWidth
-                inputProps={{ min: 1 }}
+                slotProps={{ htmlInput: { min: 1 } }}
+                error={!!fieldErrors.quantity}
+                helperText={fieldErrors.quantity?.join(", ")}
               />
               <TextField
                 label="Price per item"
@@ -197,7 +198,9 @@ export default function EditOrderPage() {
                 }
                 required
                 fullWidth
-                inputProps={{ min: 0, step: 0.01 }}
+                slotProps={{ htmlInput: { min: 0, step: 0.01 } }}
+                error={!!fieldErrors.price_per_item}
+                helperText={fieldErrors.price_per_item?.join(", ")}
               />
             </Stack>
             <TextField
@@ -208,6 +211,8 @@ export default function EditOrderPage() {
                 handleChange("status", e.target.value as OrderStatus)
               }
               fullWidth
+              error={!!fieldErrors.status}
+              helperText={fieldErrors.status?.join(", ")}
             >
               {ORDER_STATUS.map((status) => (
                 <MenuItem key={status} value={status}>

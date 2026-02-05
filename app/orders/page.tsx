@@ -3,11 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Box, Button, Chip, CircularProgress, Stack, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import type { Order } from "@/types";
 import { listOrdersPaginated } from "@/app/actions/orders";
-import { ORDER_STATUS_COLOR } from "@/lib/order-status-styles";
+import { OrderStatus } from "@/components";
 import {
   pageLayout,
   pageContentList,
@@ -30,21 +30,19 @@ export default function OrdersPage() {
 
     async function load() {
       setLoading(true);
-      try {
-        const { orders: data, total: totalRows } = await listOrdersPaginated(
-          paginationModel.page,
-          paginationModel.pageSize
-        );
-        if (isMounted) {
-          setOrders(data);
-          setTotal(totalRows);
-        }
-      } catch (err) {
-        console.error("OrdersPage:", err);
-        if (isMounted) setError("Failed to load orders.");
-      } finally {
-        if (isMounted) setLoading(false);
+      setError(null);
+      const result = await listOrdersPaginated(
+        paginationModel.page,
+        paginationModel.pageSize
+      );
+      if (!isMounted) return;
+      if (!result.success) {
+        setError(result.error);
+      } else {
+        setOrders(result.data.orders);
+        setTotal(result.data.total);
       }
+      setLoading(false);
     }
 
     load();
@@ -78,12 +76,7 @@ export default function OrdersPage() {
         headerName: "Status",
         width: 130,
         renderCell: (params) => (
-          <Chip
-            size="small"
-            label={params.value}
-            color={ORDER_STATUS_COLOR[params.value as keyof typeof ORDER_STATUS_COLOR]}
-            variant="outlined"
-          />
+          <OrderStatus status={params.value as Order["status"]} />
         ),
       },
       {
