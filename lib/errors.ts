@@ -1,8 +1,3 @@
-/**
- * Structured errors for the app. Repositories and services throw AppError;
- * API and actions catch and map to HTTP / result shape.
- */
-
 export const APP_ERROR_CODES = [
   "VALIDATION",
   "NOT_FOUND",

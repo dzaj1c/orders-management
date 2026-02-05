@@ -1,6 +1,3 @@
-/**
- * Shared utilities, helpers, and cross-cutting code.
- */
 export { supabaseClient } from "./supabaseClient";
 export {
   appError,

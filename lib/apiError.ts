@@ -13,10 +13,6 @@ const CODE_TO_STATUS: Record<AppErrorCode, number> = {
   INTERNAL: 500,
 };
 
-/**
- * Turn any thrown value into a consistent JSON error response.
- * Use in API route catch blocks or via withApiErrorHandler.
- */
 export function handleApiError(err: unknown): NextResponse {
   console.error("[API error]", err);
 
@@ -42,10 +38,6 @@ type RouteHandler = (
   context?: RouteContext
 ) => Promise<NextResponse>;
 
-/**
- * Wraps an API route handler so any thrown error is caught and returned
- * via handleApiError. Avoids try/catch in each route.
- */
 export function withApiErrorHandler(fn: RouteHandler): RouteHandler {
   return async (request: Request, context?: RouteContext) => {
     try {
