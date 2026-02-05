@@ -14,6 +14,7 @@ import {
 import { ORDER_STATUS, type OrderStatus } from "@/types";
 import type { Order } from "@/types";
 import { getOrderById, updateOrder } from "@/app/actions/orders";
+import { handleResult } from "@/lib/actionResult";
 import {
   pageLayout,
   pageContentForm,
@@ -54,20 +55,20 @@ export default function EditOrderPage() {
     async function load() {
       const result = await getOrderById(idNum);
       if (!isMounted) return;
-      if (!result.success) {
-        setError(result.error);
-      } else {
-        const data = result.data;
-        setOrder(data);
-        setForm({
-          product_name: data.product_name,
-          customer_name: data.customer_name,
-          delivery_address: data.delivery_address,
-          quantity: data.quantity,
-          price_per_item: data.price_per_item,
-          status: data.status,
-        });
+      if (!handleResult(result, setError)) {
+        setLoading(false);
+        return;
       }
+      const data = result.data;
+      setOrder(data);
+      setForm({
+        product_name: data.product_name,
+        customer_name: data.customer_name,
+        delivery_address: data.delivery_address,
+        quantity: data.quantity,
+        price_per_item: data.price_per_item,
+        status: data.status,
+      });
       setLoading(false);
     }
 
@@ -101,11 +102,7 @@ export default function EditOrderPage() {
     });
 
     setSubmitting(false);
-    if (!result.success) {
-      setError(result.error);
-      setFieldErrors(result.fieldErrors ?? {});
-      return;
-    }
+    if (!handleResult(result, setError, setFieldErrors)) return;
     router.push(`/orders/${order.id}`);
   }
 

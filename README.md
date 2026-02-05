@@ -1,37 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orders onboarding
 
-## Getting Started
+A Next.js app for managing orders, using Supabase for data and server actions for mutations.
 
-First, run the development server:
+## Run locally
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Development:** `npm run dev` — dev server at [http://localhost:3000](http://localhost:3000)
+- **Build:** `npm run build` — production build
+- **Seed (optional):** `npm run seed:orders` — seed the database (see below)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create `.env.local` (e.g. from `env.example`) and set:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `NEXT_PUBLIC_SUPABASE_URL` — your Supabase project URL (from dashboard)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — your Supabase anonymous key
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Restart the dev server after changing `.env.local`.
 
 ## Order seeding
 
-A script can periodically create orders and advance their statuses (for demo data). Copy `env.example` to `.env.local` if needed, then set:
+The seed script can periodically create orders and advance their statuses (for demo data). In `.env.local` you can set:
 
 - `ENABLE_SEEDING=true` to enable the seeder
 - `SEED_TICK_INTERVAL_MS=60000` (milliseconds; minimum 5000)
@@ -44,10 +32,9 @@ npm run seed:orders
 
 Fake data (products, customers, Sarajevo-related addresses) is in `scripts/seed-data.json`. The process runs until you stop it (Ctrl+C).
 
-**If you see POST requests but no new orders in the DB or table:** Supabase is likely rejecting inserts/selects. In Supabase Dashboard → Table Editor → `orders` → "Row Level Security": either disable RLS for the table or add policies that allow `INSERT` and `SELECT` for the `anon` role. Check the terminal where `npm run dev` (or `npm run seed:orders`) runs for `ordersRepository.create error:` or `ordersRepository.list error:` with the exact Supabase error.
+**If you see POST requests but no new orders in the DB or table:** Supabase is likely rejecting inserts/selects. In Supabase Dashboard → Table Editor → `orders` → "Row Level Security": either disable RLS for the table or add policies that allow `INSERT` and `SELECT` for the `anon` role. Check the terminal for `ordersRepository.create error:` or `ordersRepository.list error:` with the exact Supabase error.
 
-## Deploy on Vercel
+## Learn more
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Deploy on Vercel](https://vercel.com/new)

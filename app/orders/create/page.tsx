@@ -13,6 +13,7 @@ import {
 import { ORDER_STATUS, type OrderStatus } from "@/types";
 import type { Order } from "@/types";
 import { createOrder } from "@/app/actions/orders";
+import { handleResult } from "@/lib/actionResult";
 import { pageLayout, pageContentForm, formCard } from "@/styles/page-layout";
 
 export default function CreateOrderPage() {
@@ -55,11 +56,7 @@ export default function CreateOrderPage() {
     });
 
     setSubmitting(false);
-    if (!result.success) {
-      setError(result.error);
-      setFieldErrors(result.fieldErrors ?? {});
-      return;
-    }
+    if (!handleResult(result, setError, setFieldErrors)) return;
     router.push(`/orders/${result.data.id}`);
   }
 

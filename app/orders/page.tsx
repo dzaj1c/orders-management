@@ -7,6 +7,7 @@ import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material"
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import type { Order } from "@/types";
 import { listOrdersPaginated } from "@/app/actions/orders";
+import { handleResult } from "@/lib/actionResult";
 import { OrderStatus } from "@/components";
 import {
   pageLayout,
@@ -36,12 +37,12 @@ export default function OrdersPage() {
         paginationModel.pageSize
       );
       if (!isMounted) return;
-      if (!result.success) {
-        setError(result.error);
-      } else {
-        setOrders(result.data.orders);
-        setTotal(result.data.total);
+      if (!handleResult(result, setError)) {
+        setLoading(false);
+        return;
       }
+      setOrders(result.data.orders);
+      setTotal(result.data.total);
       setLoading(false);
     }
 

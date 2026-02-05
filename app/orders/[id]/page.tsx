@@ -18,6 +18,7 @@ import {
 import type { Order } from "@/types";
 import type { OrderStatus } from "@/types";
 import { getOrderById, deleteOrder, updateOrder } from "@/app/actions/orders";
+import { handleResult } from "@/lib/actionResult";
 import { OrderStatus as OrderStatusBadge } from "@/components";
 import {
   pageLayout,
@@ -77,11 +78,8 @@ export default function OrderDetailsPage() {
       setStatusUpdating(true);
       const result = await updateOrder(order.id, { status: newStatus });
       setStatusUpdating(false);
-      if (result.success) {
-        setOrder(result.data);
-      } else {
-        setError(result.error);
-      }
+      if (!handleResult(result, setError)) return;
+      setOrder(result.data);
     },
     [order]
   );
@@ -174,12 +172,11 @@ export default function OrderDetailsPage() {
                 setDeleting(true);
                 const result = await deleteOrder(order.id);
                 setDeleting(false);
-                if (result.success) {
-                  router.push("/orders");
-                } else {
-                  setError(result.error);
+                if (!handleResult(result, setError)) {
                   setDeleteDialogOpen(false);
+                  return;
                 }
+                router.push("/orders");
               }}
               color="error"
               variant="contained"
