@@ -1,4 +1,4 @@
-# Orders onboarding
+# Orders management
 
 A Next.js app for managing orders, using Supabase for data and server actions for mutations.
 
@@ -31,8 +31,6 @@ npm run seed:orders
 ```
 
 Fake data (products, customers, Sarajevo-related addresses) is in `scripts/seed-data.json`. The process runs until you stop it (Ctrl+C).
-
-**If you see POST requests but no new orders in the DB or table:** Supabase is likely rejecting inserts/selects. In Supabase Dashboard → Table Editor → `orders` → "Row Level Security": either disable RLS for the table or add policies that allow `INSERT` and `SELECT` for the `anon` role. Check the terminal for `ordersRepository.create error:` or `ordersRepository.list error:` with the exact Supabase error.
 
 ## Learn more
 
