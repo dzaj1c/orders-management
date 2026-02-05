@@ -23,7 +23,6 @@ function getSupabaseClient(): SupabaseClient {
   return _client;
 }
 
-/** Lazy-initialized so build can succeed without env; validated on first use at runtime. Only repositories should import this. */
 export const supabaseClient = new Proxy(
   {} as SupabaseClient,
   {

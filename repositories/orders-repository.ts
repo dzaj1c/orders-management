@@ -15,10 +15,6 @@ function supabaseErrorToAppError(
   throw appError(code, message);
 }
 
-/**
- * Repository: persistence for `orders`. Only layer that uses Supabase client.
- * Throws AppError on failure.
- */
 export const ordersRepository = {
   async getById(id: number): Promise<Order> {
     const { data, error } = await supabaseClient
@@ -45,7 +41,6 @@ export const ordersRepository = {
     return (data ?? []) as Order[];
   },
 
-  /** Server-side pagination: one page of orders and total row count. */
   async listPaginated(
     page: number,
     pageSize: number

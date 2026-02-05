@@ -1,7 +1,3 @@
-/**
- * Order types matching the database schema.
- */
-
 export const ORDER_STATUS = [
   "CREATED",
   "PROCESSING",
@@ -24,5 +20,4 @@ export interface Order {
   updated_at: string;
 }
 
-/** Inferred from schemas/order (single source of truth). */
 export type { OrderInsert, OrderUpdate } from "@/schemas/order";
