@@ -91,6 +91,10 @@ export function OrderStatus({
       label={status}
       color={CHIP_COLOR[status]}
       variant="outlined"
+      sx={{
+        width: 100,
+        "& .MuiChip-label": { justifyContent: "center" },
+      }}
     />
   );
 }

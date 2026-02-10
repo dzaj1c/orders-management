@@ -65,7 +65,7 @@ export function SnackbarProvider({ children }: { children: React.ReactNode }) {
         open={state.open}
         autoHideDuration={AUTO_HIDE_DURATION}
         onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           severity={state.severity}
