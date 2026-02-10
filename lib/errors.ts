@@ -22,6 +22,18 @@ export function appError(
   return { code, message, ...(fieldErrors && { fieldErrors }) };
 }
 
+/**
+ * Build a single error message from Zod-style field errors for display (e.g. snackbar).
+ * Falls back to defaultMessage when there are no field messages.
+ */
+export function formatFieldErrors(
+  fieldErrors: Record<string, string[]>,
+  defaultMessage = "Validation failed"
+): string {
+  const messages = Object.values(fieldErrors).flat().filter(Boolean);
+  return messages.length > 0 ? messages.join(". ") : defaultMessage;
+}
+
 export function isAppError(x: unknown): x is AppError {
   return (
     typeof x === "object" &&

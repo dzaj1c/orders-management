@@ -1,52 +1,101 @@
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@mui/material";
-import { type GridColDef } from "@mui/x-data-grid";
+import { type GridColDef, GridRowModes, type GridRowModesModel, type GridRowId } from "@mui/x-data-grid";
 import { OrderStatus } from "@/components";
-import type { Order } from "@/types";
+import { OrderRowActions } from "@/components/orders/OrderRowActions";
+import type { Order, OrderStatus as OrderStatusType } from "@/types";
+import { ORDER_STATUS } from "@/types";
 
-export function useOrderColumns() {
-  const router = useRouter();
+export interface OrderColumnsEditHandlers {
+  rowModesModel: GridRowModesModel;
+  onStartEdit: (id: GridRowId) => void;
+  onSave: (id: GridRowId) => void;
+  onCancel: (id: GridRowId) => void;
+  /** When set, this row id is the inline "new" row; ID column shows "—" instead of the value. */
+  newRowId?: GridRowId;
+}
+
+export function useOrderColumns(
+  onDeleteOrder: (id: number) => void | Promise<void>,
+  editHandlers: OrderColumnsEditHandlers
+) {
+  const { rowModesModel, onStartEdit, onSave, onCancel, newRowId } = editHandlers;
 
   return React.useMemo<GridColDef<Order>[]>(() => [
-    { field: "id", headerName: "ID", width: 80 },
-    { field: "product_name", headerName: "Product", flex: 1, minWidth: 150 },
-    { field: "customer_name", headerName: "Customer", flex: 1, minWidth: 160 },
-    { field: "quantity", headerName: "Quantity", type: "number", width: 80 },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 80,
+      valueFormatter: (value, row) =>
+        newRowId != null && row.id === newRowId ? "—" : String(value),
+    },
+    {
+      field: "product_name",
+      headerName: "Product",
+      flex: 1,
+      minWidth: 150,
+      editable: true,
+    },
+    {
+      field: "customer_name",
+      headerName: "Customer",
+      flex: 1,
+      minWidth: 160,
+      editable: true,
+    },
+    {
+      field: "delivery_address",
+      headerName: "Delivery address",
+      flex: 1,
+      minWidth: 180,
+      editable: true,
+    },
+    {
+      field: "quantity",
+      headerName: "Quantity",
+      type: "number",
+      width: 80,
+      editable: true,
+    },
     {
       field: "price_per_item",
       headerName: "Price / item",
       type: "number",
       width: 130,
+      editable: true,
       valueFormatter: (value: number) => `$${value.toFixed(2)}`,
     },
     {
       field: "status",
       headerName: "Status",
       width: 130,
-      renderCell: (params) => <OrderStatus status={params.value} />,
+      type: "singleSelect",
+      valueOptions: [...ORDER_STATUS],
+      editable: true,
+      renderCell: (params) => <OrderStatus status={params.value as OrderStatusType} />,
     },
     {
       field: "created_at",
       headerName: "Created at",
       flex: 1,
       minWidth: 180,
-      valueFormatter: (value: string) => new Date(value).toLocaleString(),
+      valueFormatter: (value: string) =>
+        value ? new Date(value).toLocaleString() : "",
     },
     {
       field: "actions",
       headerName: "Actions",
       sortable: false,
-      width: 140,
+      width: 260,
       renderCell: (params) => (
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={() => router.push(`/orders/${params.row.id}`)}
-        >
-          View
-        </Button>
+        <OrderRowActions
+          params={params}
+          isEditMode={rowModesModel[params.id]?.mode === GridRowModes.Edit}
+          onDelete={onDeleteOrder}
+          onStartEdit={onStartEdit}
+          onSave={onSave}
+          onCancel={onCancel}
+        />
       ),
     },
-  ], [router]);
+  ], [onDeleteOrder, rowModesModel, onStartEdit, onSave, onCancel, newRowId]);
 }

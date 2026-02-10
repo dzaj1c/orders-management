@@ -1,28 +1,43 @@
 "use client";
 
 import { Box } from "@mui/material";
-import { DataGrid, GridPaginationModel } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridPaginationModel,
+  GridRowModesModel,
+} from "@mui/x-data-grid";
 import { dataGridWrapper } from "@/styles/page-layout";
-import { useOrderColumns } from "./useOrderColumns";
 import type { Order } from "@/types";
 
-interface OrdersTableProps {
+interface OrdersGridProps {
   orders: Order[];
   total: number;
   loading: boolean;
+  columns: GridColDef<Order>[];
   paginationModel: GridPaginationModel;
   onPaginationModelChange: (model: GridPaginationModel) => void;
+  rowModesModel: GridRowModesModel;
+  onRowModesModelChange: (model: GridRowModesModel) => void;
+  onProcessRowUpdate: (
+    newRow: Order,
+    oldRow: Order
+  ) => Promise<Order>;
+  onProcessRowUpdateError?: (error: unknown) => void;
 }
 
 export function OrdersGrid({
   orders,
   total,
   loading,
+  columns,
   paginationModel,
   onPaginationModelChange,
-}: OrdersTableProps) {
-  const columns = useOrderColumns();
-
+  rowModesModel,
+  onRowModesModelChange,
+  onProcessRowUpdate,
+  onProcessRowUpdateError,
+}: OrdersGridProps) {
   return (
     <Box sx={dataGridWrapper}>
       <DataGrid
@@ -30,7 +45,12 @@ export function OrdersGrid({
         columns={columns}
         rowCount={total}
         loading={loading}
-        density="compact"
+        editMode="row"
+        rowModesModel={rowModesModel}
+        onRowModesModelChange={onRowModesModelChange}
+        processRowUpdate={onProcessRowUpdate}
+        onProcessRowUpdateError={onProcessRowUpdateError}
+        density="standard"
         disableColumnResize
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
