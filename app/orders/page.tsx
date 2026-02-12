@@ -1,23 +1,82 @@
 "use client";
 
-import { Box } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { pageLayout, pageContentList } from "@/styles/page-layout";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { OrdersHeader } from "@/components/orders/OrdersHeader";
 import { OrdersGrid } from "@/components/orders/OrdersGrid";
-import { useOrdersPage } from "./useOrdersPage";
+import StatCard from "@/components/orders/StatCard";
+import { useOrdersStats, useOrdersList, useOrdersCrud } from "@/hooks/orders";
 
 export default function OrdersPage() {
-  const { error, gridProps, handleAddOrder, isAddingRow } = useOrdersPage();
+  const router = useRouter();
+
+  const { stats } = useOrdersStats();
+  const list = useOrdersList();
+  const crud = useOrdersCrud({ setError: list.setError });
+
+  const gridCrud = {
+    ...crud,
+    onView: (id: number) => router.push(`/orders/${id}`),
+  };
+
+  const cards = stats ? (
+    <Stack direction="row" spacing={2} sx={{ mb: 3 }} useFlexGap flexWrap="wrap" alignItems="stretch">
+      <StatCard
+        title="Delivered orders"
+        value={String(stats.deliveredTotal)}
+        interval="Last 7 days"
+        xAxisData={stats.last7DaysLabels}
+        data={stats.deliveredByDay}
+      />
+      <StatCard
+        title="Canceled deliveries"
+        value={String(stats.canceledTotal)}
+        interval="Last 7 days"
+        xAxisData={stats.last7DaysLabels}
+        data={stats.canceledByDay}
+        chartVariant="error"
+      />
+      <StatCard
+        title="Delivered customers"
+        value={String(stats.deliveredCustomers)}
+        interval="Last 7 days"
+        xAxisData={stats.last7DaysLabels}
+        data={stats.deliveredCustomersByDay}
+        chartVariant="neutral"
+      />
+      <Card variant="outlined" sx={{ flexGrow: 1, minWidth: 200 }}>
+        <CardContent>
+          <Typography component="h2" variant="subtitle2" gutterBottom>
+            AI insights
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+            Coming soon.
+          </Typography>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<AutoAwesomeIcon />}
+            disabled
+          >
+            Get insights
+          </Button>
+        </CardContent>
+      </Card>
+    </Stack>
+  ) : null;
 
   return (
     <Box sx={pageLayout}>
       <Box sx={pageContentList}>
-        <OrdersHeader onAddOrder={handleAddOrder} isAddingRow={isAddingRow} />
-        {error ? (
-          <ErrorState message={error} />
+        <OrdersHeader />
+        {cards} 
+        {list.error ? (
+          <ErrorState message={list.error} />
         ) : (
-          <OrdersGrid {...gridProps} />
+          <OrdersGrid loadPage={list.loadPage} crud={gridCrud} />
         )}
       </Box>
     </Box>

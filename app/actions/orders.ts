@@ -9,6 +9,7 @@ import {
   updateOrder as updateOrderService,
   deleteOrder as deleteOrderService,
 } from "@/services/orders";
+import { getOrdersStats as getOrdersStatsService } from "@/services/orders-stats";
 import { withResult } from "@/lib/actionResult";
 
 export async function listOrders() {
@@ -33,4 +34,8 @@ export async function updateOrder(id: number, data: OrderUpdate) {
 
 export async function deleteOrder(id: number) {
   return withResult(() => deleteOrderService(id));
+}
+
+export async function getOrdersStats() {
+  return withResult(() => getOrdersStatsService());
 }

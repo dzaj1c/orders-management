@@ -16,7 +16,8 @@ export interface OrderColumnsEditHandlers {
 
 export function useOrderColumns(
   onDeleteOrder: (id: number) => void | Promise<void>,
-  editHandlers: OrderColumnsEditHandlers
+  editHandlers: OrderColumnsEditHandlers,
+  onView?: (id: number) => void
 ) {
   const { rowModesModel, onStartEdit, onSave, onCancel, newRowId } = editHandlers;
 
@@ -90,6 +91,7 @@ export function useOrderColumns(
         <OrderRowActions
           params={params}
           isEditMode={rowModesModel[params.id]?.mode === GridRowModes.Edit}
+          onView={onView}
           onDelete={onDeleteOrder}
           onStartEdit={onStartEdit}
           onSave={onSave}
@@ -97,5 +99,5 @@ export function useOrderColumns(
         />
       ),
     },
-  ], [onDeleteOrder, rowModesModel, onStartEdit, onSave, onCancel, newRowId]);
+  ], [onDeleteOrder, onView, rowModesModel, onStartEdit, onSave, onCancel, newRowId]);
 }

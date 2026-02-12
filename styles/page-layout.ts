@@ -14,7 +14,7 @@ export const pageLayout: SxProps<Theme> = {
 /** Inner content box – list page (wide). */
 export const pageContentList: SxProps<Theme> = {
   width: "100%",
-  maxWidth: 1280,
+  maxWidth: 1600,
 };
 
 /** Inner content box – form pages (create/edit). */

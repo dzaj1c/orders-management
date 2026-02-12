@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { Button, Stack, Tooltip } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -15,6 +14,7 @@ import type { Order } from "@/types";
 interface OrderRowActionsProps {
   params: GridRenderCellParams<Order>;
   isEditMode: boolean;
+  onView?: (id: number) => void;
   onDelete: (id: number) => void | Promise<void>;
   onStartEdit: (id: GridRowId) => void;
   onSave: (id: GridRowId) => void;
@@ -24,12 +24,12 @@ interface OrderRowActionsProps {
 export function OrderRowActions({
   params,
   isEditMode,
+  onView,
   onDelete,
   onStartEdit,
   onSave,
   onCancel,
 }: OrderRowActionsProps) {
-  const router = useRouter();
   const id = params.id as number;
 
   const handleSave = React.useCallback(() => {
@@ -45,8 +45,8 @@ export function OrderRowActions({
   }, [id, onStartEdit]);
 
   const handleView = React.useCallback(() => {
-    router.push(`/orders/${id}`);
-  }, [router, id]);
+    onView?.(id);
+  }, [id, onView]);
 
   const handleDelete = React.useCallback(() => {
     if (window.confirm("Delete this order?")) {
@@ -73,11 +73,13 @@ export function OrderRowActions({
 
   return (
     <Stack direction="row" spacing={1} onClick={(e) => e.stopPropagation()}>
-      <Tooltip title="View">
-        <Button size="small" variant="outlined" onClick={handleView} startIcon={<VisibilityIcon />}>
-          View
-        </Button>
-      </Tooltip>
+      {onView != null && (
+        <Tooltip title="View">
+          <Button size="small" variant="outlined" onClick={handleView} startIcon={<VisibilityIcon />}>
+            View
+          </Button>
+        </Tooltip>
+      )}
       <Tooltip title="Edit">
         <Button size="small" variant="outlined" onClick={handleEdit} startIcon={<EditIcon />}>
           Edit
