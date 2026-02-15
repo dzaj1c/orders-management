@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useCallback, useState } from "react";
 import { listOrdersPaginated } from "@/app/actions/orders";
 import { handleResult } from "@/lib/actionResult";
 import type { Order } from "@/types";
@@ -8,12 +8,12 @@ import type { Order } from "@/types";
 export type LoadPageResult = { data: Order[]; total: number };
 
 export function useOrdersList() {
-  const [orders, setOrders] = React.useState<Order[]>([]);
-  const [total, setTotal] = React.useState(0);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const loadPage = React.useCallback(
+  const loadPage = useCallback(
     async (page: number, pageSize: number): Promise<LoadPageResult> => {
       setLoading(true);
       try {

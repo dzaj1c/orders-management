@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { pageLayout, pageContentList } from "@/styles/page-layout";
+import { CustomGrid } from "@/components/custom-grid";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { OrdersHeader } from "@/components/orders/OrdersHeader";
-import { OrdersGrid } from "@/components/orders/OrdersGrid";
 import StatCard from "@/components/orders/StatCard";
-import { useOrdersStats, useOrdersList, useOrdersCrud } from "@/hooks/orders";
+import { useOrdersStats, useOrdersList, useOrdersCrud, useOrdersGrid } from "@/hooks/orders";
+import type { Order } from "@/types";
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -21,6 +22,8 @@ export default function OrdersPage() {
     ...crud,
     onView: (id: number) => router.push(`/orders/${id}`),
   };
+
+  const gridProps = useOrdersGrid({ loadData: list.loadPage, crud: gridCrud });
 
   const cards = stats ? (
     <Stack direction="row" spacing={2} sx={{ mb: 3 }} useFlexGap flexWrap="wrap" alignItems="stretch">
@@ -76,7 +79,7 @@ export default function OrdersPage() {
         {list.error ? (
           <ErrorState message={list.error} />
         ) : (
-          <OrdersGrid loadPage={list.loadPage} crud={gridCrud} />
+          <CustomGrid<Order> {...gridProps} />
         )}
       </Box>
     </Box>

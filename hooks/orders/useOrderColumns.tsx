@@ -1,5 +1,5 @@
-import * as React from "react";
-import { type GridColDef, GridRowModes, type GridRowModesModel, type GridRowId } from "@mui/x-data-grid";
+import { useMemo } from "react";
+import { type GridColDef, type GridRenderCellParams, GridRowModes, type GridRowModesModel, type GridRowId } from "@mui/x-data-grid";
 import { OrderStatus } from "@/components";
 import { OrderRowActions } from "@/components/orders/OrderRowActions";
 import type { Order, OrderStatus as OrderStatusType } from "@/types";
@@ -14,14 +14,24 @@ export interface OrderColumnsEditHandlers {
   newRowId?: GridRowId;
 }
 
+export interface UseOrderColumnsOptions {
+  /** When false, excludes the actions column (grid adds it). Default true. */
+  includeActions?: boolean;
+  /** When includeActions is false, use this for the ID column "new row" placeholder (e.g. -1). */
+  newRowId?: GridRowId;
+}
+
 export function useOrderColumns(
   onDeleteOrder: (id: number) => void | Promise<void>,
   editHandlers: OrderColumnsEditHandlers,
-  onView?: (id: number) => void
+  onView?: (id: number) => void,
+  options: UseOrderColumnsOptions = {}
 ) {
-  const { rowModesModel, onStartEdit, onSave, onCancel, newRowId } = editHandlers;
+  const { includeActions = true, newRowId: optionsNewRowId } = options;
+  const { rowModesModel, onStartEdit, onSave, onCancel, newRowId: editHandlersNewRowId } = editHandlers;
+  const newRowId = optionsNewRowId ?? editHandlersNewRowId;
 
-  return React.useMemo<GridColDef<Order>[]>(() => [
+  const allColumns = useMemo<GridColDef<Order>[]>(() => [
     {
       field: "id",
       headerName: "ID",
@@ -82,22 +92,28 @@ export function useOrderColumns(
       valueFormatter: (value: string) =>
         value ? new Date(value).toLocaleString() : "",
     },
-    {
-      field: "actions",
-      headerName: "Actions",
-      sortable: false,
-      width: 260,
-      renderCell: (params) => (
-        <OrderRowActions
-          params={params}
-          isEditMode={rowModesModel[params.id]?.mode === GridRowModes.Edit}
-          onView={onView}
-          onDelete={onDeleteOrder}
-          onStartEdit={onStartEdit}
-          onSave={onSave}
-          onCancel={onCancel}
-        />
-      ),
-    },
-  ], [onDeleteOrder, onView, rowModesModel, onStartEdit, onSave, onCancel, newRowId]);
+    ...(includeActions
+      ? [
+          {
+            field: "actions" as const,
+            headerName: "Actions",
+            sortable: false,
+            width: 260,
+            renderCell: (params: GridRenderCellParams<Order>) => (
+              <OrderRowActions
+                params={params}
+                isEditMode={rowModesModel[params.id]?.mode === GridRowModes.Edit}
+                onView={onView}
+                onDelete={onDeleteOrder}
+                onStartEdit={onStartEdit}
+                onSave={onSave}
+                onCancel={onCancel}
+              />
+            ),
+          },
+        ]
+      : []),
+  ], [includeActions, onDeleteOrder, onView, rowModesModel, onStartEdit, onSave, onCancel, newRowId]);
+
+  return allColumns;
 }
