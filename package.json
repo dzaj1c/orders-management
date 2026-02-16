@@ -12,7 +12,10 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.3.7",
     "@mui/material": "^6.5.0",
+    "@mui/system": "^7.3.7",
+    "@mui/x-charts": "^8.27.0",
     "@mui/x-data-grid": "^7.29.12",
     "@supabase/supabase-js": "^2.49.1",
     "next": "16.1.6",

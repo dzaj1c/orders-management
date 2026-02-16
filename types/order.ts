@@ -21,3 +21,13 @@ export interface Order {
 }
 
 export type { OrderInsert, OrderUpdate } from "@/schemas/order";
+
+export interface OrderStats {
+  deliveredByDay: number[];
+  deliveredTotal: number;
+  deliveredCustomers: number;
+  deliveredCustomersByDay: number[];
+  canceledByDay: number[];
+  canceledTotal: number;
+  last7DaysLabels: string[];
+}

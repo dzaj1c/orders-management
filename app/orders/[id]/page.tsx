@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import type { Order } from "@/types";
 import type { OrderStatus } from "@/types";
-import { getOrderById, deleteOrder, updateOrder } from "@/app/actions/orders";
+import { getOrderById, deleteOrder, updateOrder } from "@/actions/orders";
 import { handleResult } from "@/lib/actionResult";
 import { OrderStatus as OrderStatusBadge } from "@/components";
 import {

@@ -48,7 +48,6 @@ const SELECT_SX_BY_STATUS: Record<
 
 export interface OrderStatusProps {
   status: OrderStatus;
-  /** When set, renders a dropdown to change status; otherwise a read-only chip. */
   onChange?: (status: OrderStatus) => void;
   disabled?: boolean;
   size?: "small" | "medium";
@@ -91,6 +90,10 @@ export function OrderStatus({
       label={status}
       color={CHIP_COLOR[status]}
       variant="outlined"
+      sx={{
+        width: 100,
+        "& .MuiChip-label": { justifyContent: "center" },
+      }}
     />
   );
 }

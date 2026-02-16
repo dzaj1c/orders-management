@@ -1,7 +1,7 @@
 import type { Order, OrderInsert, OrderUpdate } from "@/types";
 import { orderInsertSchema, orderUpdateSchema } from "@/schemas";
 import { ordersRepository } from "@/repositories";
-import { appError } from "@/lib/errors";
+import { appError, formatFieldErrors } from "@/lib/errors";
 
 export async function listOrders(): Promise<Order[]> {
   return ordersRepository.list();
@@ -42,10 +42,11 @@ export async function createOrder(data: OrderInsert): Promise<Order> {
   const parsed = orderInsertSchema.safeParse(data);
   if (!parsed.success) {
     const flattened = parsed.error.flatten();
+    const fieldErrors = flattened.fieldErrors as Record<string, string[]>;
     throw appError(
       "VALIDATION",
-      "Validation failed",
-      flattened.fieldErrors as Record<string, string[]>
+      formatFieldErrors(fieldErrors),
+      fieldErrors
     );
   }
   return ordersRepository.create(parsed.data);
@@ -58,10 +59,11 @@ export async function updateOrder(
   const parsed = orderUpdateSchema.safeParse(data);
   if (!parsed.success) {
     const flattened = parsed.error.flatten();
+    const fieldErrors = flattened.fieldErrors as Record<string, string[]>;
     throw appError(
       "VALIDATION",
-      "Validation failed",
-      flattened.fieldErrors as Record<string, string[]>
+      formatFieldErrors(fieldErrors),
+      fieldErrors
     );
   }
   return ordersRepository.update(id, parsed.data);

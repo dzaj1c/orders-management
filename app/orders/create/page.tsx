@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { ORDER_STATUS, type OrderStatus } from "@/types";
 import type { Order } from "@/types";
-import { createOrder } from "@/app/actions/orders";
+import { createOrder } from "@/actions/orders";
 import { handleResult } from "@/lib/actionResult";
 import { pageLayout, pageContentForm, formCard } from "@/styles/page-layout";
 
