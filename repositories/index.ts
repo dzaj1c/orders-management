@@ -1,6 +1,6 @@
 export { ordersRepository } from "./orders-repository";
 export {
-  getOrdersCreatedBetween,
-  getOrdersDeliveredBetween,
+  getOrdersStatsRpc,
+  type OrdersStatsRpcResult,
 } from "./orders-stats-repository";
 

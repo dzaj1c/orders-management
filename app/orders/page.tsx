@@ -54,9 +54,6 @@ export default function OrdersPage() {
           <Typography component="h2" variant="subtitle2" gutterBottom>
             AI insights
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-            Coming soon.
-          </Typography>
           <Button
             size="small"
             variant="outlined"

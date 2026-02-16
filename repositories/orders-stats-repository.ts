@@ -1,42 +1,32 @@
 import { supabaseClient } from "@/lib";
 import { appError } from "@/lib/errors";
 
-export type DeliveredRow = { updated_at: string; customer_name: string };
+export type OrdersStatsRpcResult = {
+  delivered_by_day: number[];
+  delivered_total: number;
+  delivered_customers: number;
+  delivered_customers_by_day: number[];
+  canceled_by_day: number[];
+  canceled_total: number;
+};
 
-export type CanceledRow = { updated_at: string };
-
-export async function getDeliveredInRange(
+export async function getOrdersStatsRpc(
   startIso: string,
   endIso: string
-): Promise<DeliveredRow[]> {
-  const { data, error } = await supabaseClient
-    .from("orders")
-    .select("updated_at, customer_name")
-    .eq("status", "DELIVERED")
-    .gte("updated_at", startIso)
-    .lte("updated_at", endIso);
+): Promise<OrdersStatsRpcResult> {
+  const { data, error } = await supabaseClient.rpc("get_orders_stats_7d", {
+    start_iso: startIso,
+    end_iso: endIso,
+  });
 
   if (error) {
-    console.error("ordersStatsRepository.getDeliveredInRange error:", error.message);
+    console.error("ordersStatsRepository.getOrdersStatsRpc error:", error.message);
     throw appError("INTERNAL", "Failed to load order stats.");
   }
-  return (data ?? []) as DeliveredRow[];
-}
 
-export async function getCanceledInRange(
-  startIso: string,
-  endIso: string
-): Promise<CanceledRow[]> {
-  const { data, error } = await supabaseClient
-    .from("orders")
-    .select("updated_at")
-    .eq("status", "CANCELED")
-    .gte("updated_at", startIso)
-    .lte("updated_at", endIso);
-
-  if (error) {
-    console.error("ordersStatsRepository.getCanceledInRange error:", error.message);
-    throw appError("INTERNAL", "Failed to load order stats.");
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row || typeof row !== "object") {
+    throw appError("INTERNAL", "Invalid order stats response.");
   }
-  return (data ?? []) as CanceledRow[];
+  return row as OrdersStatsRpcResult;
 }

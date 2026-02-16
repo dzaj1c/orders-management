@@ -44,7 +44,7 @@ export function CustomGrid<T extends GridValidRowModel>(props: CustomGridProps<T
             disabled={rowModes.isAddingRow}
             startIcon={<AddIcon />}
           >
-            Add inline
+            Add new
           </Button>
         </Box>
       )}
