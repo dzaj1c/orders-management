@@ -1,16 +1,13 @@
 "use client";
 
-/**
- * Wires create/update/delete to server actions. Grid owns refetch (loadPage) and clearNewRow.
- */
 import { useCallback } from "react";
 import {
   createOrder as createOrderAction,
   updateOrder as updateOrderAction,
   deleteOrder as deleteOrderAction,
-} from "@/app/actions/orders";
+} from "@/actions/orders";
 import { useSnackbar } from "@/components/ui/AppSnackbar";
-import { NEW_ROW_ID } from "@/components/orders/useOrderRowModes";
+import { NEW_ROW_ID } from "@/components/ui/custom-grid";
 import type { Order, OrderInsert, OrderUpdate } from "@/types";
 
 export interface UseOrdersCrudList {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getOrdersStats as getOrdersStatsAction } from "@/app/actions/orders";
+import { getOrdersStats as getOrdersStatsAction } from "@/actions/orders";
 import type { OrderStats } from "@/types";
 
 export function useOrdersStats() {

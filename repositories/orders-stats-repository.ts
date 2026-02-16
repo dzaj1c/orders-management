@@ -1,16 +1,10 @@
 import { supabaseClient } from "@/lib";
 import { appError } from "@/lib/errors";
 
-/** Minimal row for delivered-in-range: used to aggregate by day and distinct customers. */
 export type DeliveredRow = { updated_at: string; customer_name: string };
 
-/** Minimal row for canceled-in-range: used to aggregate by day. */
 export type CanceledRow = { updated_at: string };
 
-/**
- * Fetches only updated_at and customer_name for orders delivered in the given range.
- * Service aggregates into deliveredByDay, deliveredTotal, deliveredCustomers, deliveredCustomersByDay.
- */
 export async function getDeliveredInRange(
   startIso: string,
   endIso: string
@@ -29,10 +23,6 @@ export async function getDeliveredInRange(
   return (data ?? []) as DeliveredRow[];
 }
 
-/**
- * Fetches only updated_at for orders canceled in the given range.
- * Service aggregates into canceledByDay and canceledTotal.
- */
 export async function getCanceledInRange(
   startIso: string,
   endIso: string

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { ORDER_STATUS, type OrderStatus } from "@/types";
 import type { Order } from "@/types";
-import { getOrderById, updateOrder } from "@/app/actions/orders";
+import { getOrderById, updateOrder } from "@/actions/orders";
 import { handleResult } from "@/lib/actionResult";
 import {
   pageLayout,

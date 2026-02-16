@@ -1,21 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import type { CustomGridCrud } from "@/components/custom-grid";
+import type { CustomGridCrud } from "@/components/ui/custom-grid";
+import { NEW_ROW_ID } from "@/components/ui/custom-grid";
 import { useOrderColumns } from "@/hooks/orders/useOrderColumns";
 import type { Order, OrderInsert, OrderUpdate } from "@/types";
 import type { GridRowId } from "@mui/x-data-grid";
-
-const NEW_ORDER_ROW_ID = -1 satisfies number;
-
-const noop = () => {};
-const emptyRowModes = {
-  rowModesModel: {} as import("@mui/x-data-grid").GridRowModesModel,
-  onStartEdit: noop,
-  onSave: noop,
-  onCancel: noop,
-  newRowId: NEW_ORDER_ROW_ID as GridRowId,
-};
 
 function rowToInsert(row: Order): OrderInsert {
   return {
@@ -56,12 +46,11 @@ export interface UseOrdersGridOptions {
   crud: OrdersGridCrud;
 }
 
-/** Returns props for CustomGrid<Order> so the orders page can render the grid without OrdersGrid. */
 export function useOrdersGrid({ loadData, crud }: UseOrdersGridOptions) {
   const gridCrud = useMemo(
     (): CustomGridCrud<Order> => ({
       getNewRow: () => ({
-        id: NEW_ORDER_ROW_ID as number,
+        id: NEW_ROW_ID as number,
         product_name: "",
         customer_name: "",
         delivery_address: "",
@@ -80,17 +69,11 @@ export function useOrdersGrid({ loadData, crud }: UseOrdersGridOptions) {
     [crud]
   );
 
-  const columns = useOrderColumns(
-    noop,
-    emptyRowModes,
-    undefined,
-    { includeActions: false, newRowId: NEW_ORDER_ROW_ID as GridRowId }
-  );
+  const columns = useOrderColumns();
 
   return {
     loadData,
     crud: gridCrud,
     columns,
-    newRowId: NEW_ORDER_ROW_ID as GridRowId,
   };
 }

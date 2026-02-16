@@ -22,7 +22,6 @@ export function getRowClassName(params: { indexRelativeToCurrentPage: number }):
   return params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd";
 }
 
-/** Default DataGrid static props (density, pagination mode, etc.). */
 export const dataGridDefaultProps = {
   density: "standard" as const,
   disableColumnResize: true,

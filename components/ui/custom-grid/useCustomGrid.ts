@@ -8,8 +8,8 @@ import type { CustomGridCrud, CustomGridLoadData, CustomGridProps } from "./type
 import { useGridRowModes } from "./useGridRowModes";
 
 export function useCustomGrid<T extends GridValidRowModel>(props: CustomGridProps<T>) {
-  const { loadData, crud, columns: dataColumns, newRowId: propsNewRowId } = props;
-  const newRowId = propsNewRowId ?? NEW_ROW_ID;
+  const { loadData, crud, columns: dataColumns } = props;
+  const newRowId = NEW_ROW_ID;
 
   const [data, setData] = useState<T[]>([]);
   const [total, setTotal] = useState(0);

@@ -4,10 +4,9 @@ import { useRouter } from "next/navigation";
 import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { pageLayout, pageContentList } from "@/styles/page-layout";
-import { CustomGrid } from "@/components/custom-grid";
+import { CustomGrid } from "@/components/ui/custom-grid";
 import { ErrorState } from "@/components/ui/ErrorState";
-import { OrdersHeader } from "@/components/orders/OrdersHeader";
-import StatCard from "@/components/orders/StatCard";
+import { StatCard } from "@/components/ui/StatCard";
 import { useOrdersStats, useOrdersList, useOrdersCrud, useOrdersGrid } from "@/hooks/orders";
 import type { Order } from "@/types";
 
@@ -74,7 +73,16 @@ export default function OrdersPage() {
   return (
     <Box sx={pageLayout}>
       <Box sx={pageContentList}>
-        <OrdersHeader />
+        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3} gap={2}>
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Orders
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Manage customer orders and view their current status.
+            </Typography>
+          </Box>
+        </Stack>
         {cards} 
         {list.error ? (
           <ErrorState message={list.error} />

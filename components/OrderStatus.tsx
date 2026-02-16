@@ -48,7 +48,6 @@ const SELECT_SX_BY_STATUS: Record<
 
 export interface OrderStatusProps {
   status: OrderStatus;
-  /** When set, renders a dropdown to change status; otherwise a read-only chip. */
   onChange?: (status: OrderStatus) => void;
   disabled?: boolean;
   size?: "small" | "medium";
